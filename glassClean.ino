@@ -169,6 +169,7 @@ bool moveToPosition(float x_target, float y_target)
   }
   is_moving = false;
   if(step==steps)return true;
+  Serial.println("STOP BY BUTTON");
   return false;
   
 }
@@ -201,7 +202,6 @@ void loop()
     moveAuto();
 
   }
-
   if (Serial.available() > 0)
   {
     String command = Serial.readStringUntil(';'); // Đọc chuỗi lệnh đến khi gặp newline
@@ -209,23 +209,9 @@ void loop()
     int slashIndex = command.indexOf('/');
     if (slashIndex > 0)
     {
-      int mor2_index = command.indexOf('*');
-      int mor3_index = command.indexOf('$');
-      pos[L_D] = command.substring(0, slashIndex).toInt();
-      pos[L_U] = command.substring(slashIndex + 1, mor2_index).toInt();
-      pos[R_U] = command.substring(mor2_index + 1, mor3_index).toInt();
-      pos[R_D] = command.substring(mor3_index + 1).toInt();
-      long pos_move_now[4];
-      for (int j = 0; j < 4; j++)
-      {
-        // pos_move_now[j] = new_pos[j] + pos[j];
-        new_pos[j] += pos[j];
-        pos_move_now[j] = new_pos[j];
-        if (j == L_D || j == R_D || j == R_U)
-          pos_move_now[j] = -pos_move_now[j];
-      }
-      start_wait = 1;
-      steppp.moveTo(pos_move_now);
+       float x_get = command.substring(0, slashIndex).toFloat();
+       float y_get = command.substring(slashIndex+1).toFloat();
+       moveToPosition(x_get,y_get);
       // for (int i = 0; i < 4; i++) last_pos[i] = pos[i];
       // Serial.println(new_pos[0]);
       // Serial.println(new_pos[1]);
@@ -234,6 +220,38 @@ void loop()
       // Kiểm tra số động cơ hợp lệ
     }
   }
+  // if (Serial.available() > 0)
+  // {
+  //   String command = Serial.readStringUntil(';'); // Đọc chuỗi lệnh đến khi gặp newline
+  //   // 10/20*30$50;
+  //   int slashIndex = command.indexOf('/');
+  //   if (slashIndex > 0)
+  //   {
+  //     int mor2_index = command.indexOf('*');
+  //     int mor3_index = command.indexOf('$');
+  //     pos[L_D] = command.substring(0, slashIndex).toInt();
+  //     pos[L_U] = command.substring(slashIndex + 1, mor2_index).toInt();
+  //     pos[R_U] = command.substring(mor2_index + 1, mor3_index).toInt();
+  //     pos[R_D] = command.substring(mor3_index + 1).toInt();
+  //     long pos_move_now[4];
+  //     for (int j = 0; j < 4; j++)
+  //     {
+  //       // pos_move_now[j] = new_pos[j] + pos[j];
+  //       new_pos[j] += pos[j];
+  //       pos_move_now[j] = new_pos[j];
+  //       if (j == L_D || j == R_D || j == R_U)
+  //         pos_move_now[j] = -pos_move_now[j];
+  //     }
+  //     start_wait = 1;
+  //     steppp.moveTo(pos_move_now);
+  //     // for (int i = 0; i < 4; i++) last_pos[i] = pos[i];
+  //     // Serial.println(new_pos[0]);
+  //     // Serial.println(new_pos[1]);
+  //     // Serial.println(new_pos[2]);
+  //     // Serial.println(new_pos[3]);
+  //     // Kiểm tra số động cơ hợp lệ
+  //   }
+  // }
 
   // Gọi run() để thực thi lệnh di chuyển cho từng động cơ
   // for (int i = 0; i < 4; i++) {
