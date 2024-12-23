@@ -81,10 +81,11 @@ void moveAuto()
   size_t arr_size = sizeof(point_arr) / sizeof(point_arr[0]);
   for(size_t i=0;i<arr_size;i++)
   {
-    moveToPosition(point_arr[i][0],point_arr[i][1]);
+    if(!moveToPosition(point_arr[i][0],point_arr[i][1]))break;
+    
   }
 }
-void moveToPosition(float x_target, float y_target)
+bool moveToPosition(float x_target, float y_target)
 {
   float dx = (x_target > x_now) ? step_size : -step_size;
   float dy = (y_target > y_now) ? step_size : -step_size;
@@ -97,8 +98,8 @@ void moveToPosition(float x_target, float y_target)
   float totalLength[4] = {0};
 
   is_moving = true;
-
-  for (int step = 0; step < steps; step++)
+  int step=0;
+  for (; step < steps; step++)
   {
     if (!is_moving)
       break;
@@ -166,8 +167,10 @@ void moveToPosition(float x_target, float y_target)
 
     }
   }
-
   is_moving = false;
+  if(step==steps)return true;
+  return false;
+  
 }
 void setup()
 {
